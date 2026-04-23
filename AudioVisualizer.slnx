@@ -1,0 +1,8 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="AudioVisualizer/AudioVisualizer.vcxproj" Id="8bedecb2-1df4-4967-99f0-fdef142c7c3a" />
+  <Project Path="AudioVisualizerTest/AudioVisualizerTest.vcxproj" Id="6e228332-f25f-4cf2-a081-ac1fda07304e" />
+</Solution>
