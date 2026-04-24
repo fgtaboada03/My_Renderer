@@ -1,7 +1,7 @@
 // Courtesy of Victor Gorden
 // https://www.youtube.com/watch?v=greXpRqCTKs&list=PLPaoO-vpZnumdcb4tZc4x5Q-v7CkrQ6M-&index=5
 
-#include "shaderClass.h"
+#include "shader.h"
 
 std::string get_file_contents(const char* filename) {
 	std::ifstream in(filename, std::ios::binary);
@@ -69,6 +69,10 @@ Shader::Shader(const char* vertexFile, const char* fragmentFile) {
 	glDeleteShader(fragmentShader);
 }
 
+Shader::~Shader() {
+	Delete();
+}
+
 void Shader::Activate() {
 	glUseProgram(ID);
 }
@@ -77,6 +81,6 @@ void Shader::Delete() {
 	glDeleteProgram(ID);
 }
 
-GLuint Shader::getID() {
+GLuint Shader::get_id() {
 	return this->ID;
 }

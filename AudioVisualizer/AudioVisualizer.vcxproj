@@ -143,18 +143,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BufferBuilder.cpp" />
-    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="BufferManager.cpp" />
+    <ClCompile Include="camera.cpp" />
     <ClCompile Include="EBO.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Libraries\include\glm\detail\dummy.cpp" />
     <ClCompile Include="Libraries\include\glm\detail\glm.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MultiCodecAudioDecoder.cpp" />
-    <ClCompile Include="shaderClass.cpp" />
-    <ClCompile Include="objects.cpp" />
+    <ClCompile Include="ObjectManager.cpp" />
+    <ClCompile Include="shader.cpp" />
+    <ClCompile Include="primitives.h" />
     <ClCompile Include="stb.cpp" />
-    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="texture.cpp" />
     <ClCompile Include="VAO.cpp" />
     <ClCompile Include="VBO.cpp" />
   </ItemGroup>
@@ -282,8 +283,8 @@
     <None Include="yellow.frag" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BufferBuilder.h" />
-    <ClInclude Include="Camera.h" />
+    <ClInclude Include="BufferManager.h" />
+    <ClInclude Include="camera.h" />
     <ClInclude Include="EBO.h" />
     <ClInclude Include="Libraries\include\glad\glad.h" />
     <ClInclude Include="Libraries\include\GLFW\glfw3.h" />
@@ -579,11 +580,14 @@
     <ClInclude Include="Libraries\include\libswscale\version_major.h" />
     <ClInclude Include="Libraries\include\stb\stb_image.h" />
     <ClInclude Include="MultiCodecAudioDecoder.h" />
-    <ClInclude Include="objects.h" />
-    <ClInclude Include="Texture.h" />
-    <ClInclude Include="shaderClass.h" />
+    <ClInclude Include="ObjectManager.h" />
+    <ClInclude Include="engine.h" />
+    <ClInclude Include="RenderPass.h" />
+    <ClInclude Include="texture.h" />
+    <ClInclude Include="shader.h" />
     <ClInclude Include="VAO.h" />
     <ClInclude Include="VBO.h" />
+    <ClInclude Include="VertexLayout.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="pop_cat.png" />
