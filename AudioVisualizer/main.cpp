@@ -18,6 +18,7 @@ namespace fs = std::filesystem;
 #include "EBO.h"
 #include "MultiCodecAudioDecoder.h"
 #include "objects.h"
+#include "BufferBuilder.h"
 
 // Settings
 const unsigned int SCR_WIDTH = 800;
@@ -60,26 +61,28 @@ int main() {
 
 	Objects objs;
 	objs.add_square();
-	objs.buffer_objects();
-	GLfloat* vertices = objs.get_vertices_buffer();
-	GLuint* indices = objs.get_indices_buffer();
+	if (buffer_objects(objs)) {
+		std::cout << "Failed to buffer objects" << std::endl;
+	}
+	GLfloat* vertices = objs.get_vbo_array();
+	GLuint* indices = objs.get_ebo_array();
 
 	std::cout << "Object Square" << std::endl;
 
 
-	for (GLfloat vertex : objs.get_vertex_buffer()) {
+	for (GLfloat vertex : objs.get_vbo_vector()) {
 		std::cout << "vertex " << ": " << vertex << std::endl;
 	}
 
-	for (GLuint index : objs.get_index_buffer()) {
+	for (GLuint index : objs.get_ebo_vector()) {
 		std::cout << "index " << ": " << index << std::endl;
 	}
 
-	for (int i = 0; i < objs.get_vertex_buffer_size(); i++) {
+	for (int i = 0; i < objs.get_vbo_size(); i++) {
 		std::cout << "vertex " << i << ": " << vertices[i] << std::endl;
 	}
 
-	for (int i = 0; i < objs.get_index_buffer_size(); i++) {
+	for (int i = 0; i < objs.get_ebo_size(); i++) {
 		std::cout << "index " << i << ": " << indices[i] << std::endl;
 	}
 
@@ -126,7 +129,7 @@ int main() {
 
 		VAO1.Bind();
 
-		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(objs.get_index_buffer_size()), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(objs.get_ebo_size()), GL_UNSIGNED_INT, 0);
 		// glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)

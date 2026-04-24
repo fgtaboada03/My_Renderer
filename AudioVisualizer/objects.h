@@ -14,7 +14,7 @@ struct object {
 	std::vector<GLfloat> rgb_data;
 	std::vector<GLfloat> tex_data;
 	std::vector<GLuint>  indices;
-	bool rgba = false;
+	int rgba = 0;
 };
 
 class Objects {
@@ -45,7 +45,7 @@ public:
 	int get_ebo_size();
 	int get_byte_size_vertices();
 	int get_byte_size_indices();
-	
+
 	void push_vbo(GLfloat point);
 	void push_ebo(GLuint index);
 

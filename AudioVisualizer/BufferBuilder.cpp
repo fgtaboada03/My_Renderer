@@ -5,6 +5,7 @@ int check_alignment(object obj) {
 	// Success returns 0
 	// Failure returns 1
 
+	int four_per_row = 4;
 	int three_per_row = 3;
 	int two_per_row = 2;
 	
@@ -20,7 +21,12 @@ int check_alignment(object obj) {
 	}
 
 	if (!obj.rgb_data.empty()) {
-		rgb_alignment = obj.rgb_data.size() / three_per_row;
+		if (!obj.rgba) {
+			rgb_alignment = obj.rgb_data.size() / three_per_row;
+		}
+		else {
+			rgb_alignment = obj.rgb_data.size() / four_per_row;
+		}
 	} else {
 		rgb_alignment = vertices_alignment;
 	}
@@ -44,8 +50,12 @@ int get_object_interval(object obj) {
 	if (!obj.vertices.empty()) {
 		interval += 3;
 	}
-	if (!obj.rgb_data.empty()) {
-		interval += 3;
+	if (!obj.rgb_data.empty() && !obj.rgba) {
+		if (obj.rgba) {
+			interval += 3;
+		} else {
+			interval += 4;
+		}
 	}
 	if (!obj.tex_data.empty()) {
 		interval += 2;
@@ -62,8 +72,28 @@ int buffer_object(Objects objects, object obj) {
 	int interval = get_object_interval(obj);
 	int object_vbo_size = static_cast<int>(obj.vertices.size() + obj.rgb_data.size() + obj.tex_data.size());
 	
-	for (int i = 0; i < object_vbo_size; i++) {
+	int local_location, n_scanned_vertices, local_index, i, offset;
+	for (i = 0; i < object_vbo_size; i++) {
+		local_location = object_vbo_size % interval;
+		n_scanned_vertices = i / interval;
 
+		if (local_location >= 0 && local_location <= 2) {
+			// xyz
+			local_index = (n_scanned_vertices * 3) + local_location;
+			objects.push_vbo(obj.vertices[local_index]);
+		}
+		else if (!obj.rgb_data.empty() && (local_location == 3 || local_location == 5 || (obj.rgba && local_location == 6))) {
+			// rgb or rgba
+			offset = local_location - 3;
+			local_index = (n_scanned_vertices * 3 + obj.rgba) + offset;
+			objects.push_vbo(obj.vertices[local_index]);
+		}
+		else if (!obj.tex_data.empty() && (local_location == 6 || local_location == 7 || (obj.rgba && local_location == 8))) {
+			// uv
+			offset = local_location + obj.rgba - 6;
+			local_index = (n_scanned_vertices * 2) + offset;
+			objects.push_vbo(obj.tex_data[local_index]);
+		}
 	}
 
 	for (GLuint index : obj.indices) {

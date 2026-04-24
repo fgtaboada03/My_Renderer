@@ -32,11 +32,11 @@ std::vector<GLuint> Objects::get_ebo_vector() {
 }
 
 GLfloat* Objects::get_vbo_array() {
-	return this->vertex_buffer.data();
+	return this->vbo.data();
 }
 
 GLuint* Objects::get_ebo_array() {
-	return this->index_buffer.data();
+	return this->ebo.data();
 }
 
 int Objects::get_byte_size_vertices() {
