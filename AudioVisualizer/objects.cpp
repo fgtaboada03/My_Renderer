@@ -19,7 +19,7 @@ struct object Objects::get(unsigned short id) {
 	return this->objects.at(id);
 }
 
-std::unordered_map<unsigned short, object> Objects::get_objects() {
+std::unordered_map<unsigned short, object>& Objects::get_objects() {
 	return this->objects;
 }
 

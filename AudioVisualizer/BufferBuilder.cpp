@@ -50,12 +50,8 @@ int get_object_interval(object obj) {
 	if (!obj.vertices.empty()) {
 		interval += 3;
 	}
-	if (!obj.rgb_data.empty() && !obj.rgba) {
-		if (obj.rgba) {
-			interval += 3;
-		} else {
-			interval += 4;
-		}
+	if (!obj.rgb_data.empty()) {
+		interval += obj.rgba ? 4 : 3;
 	}
 	if (!obj.tex_data.empty()) {
 		interval += 2;
@@ -64,7 +60,7 @@ int get_object_interval(object obj) {
 	return interval;
 }
 
-int buffer_object(Objects objects, object obj) {
+int buffer_object(Objects& objects, object obj) {
 	if (check_alignment(obj)) {
 		return 1;
 	}
@@ -74,7 +70,7 @@ int buffer_object(Objects objects, object obj) {
 	
 	int local_location, n_scanned_vertices, local_index, i, offset;
 	for (i = 0; i < object_vbo_size; i++) {
-		local_location = object_vbo_size % interval;
+		local_location = i % interval;
 		n_scanned_vertices = i / interval;
 
 		if (local_location >= 0 && local_location <= 2) {
@@ -86,7 +82,7 @@ int buffer_object(Objects objects, object obj) {
 			// rgb or rgba
 			offset = local_location - 3;
 			local_index = (n_scanned_vertices * 3 + obj.rgba) + offset;
-			objects.push_vbo(obj.vertices[local_index]);
+			objects.push_vbo(obj.rgb_data[local_index]);
 		}
 		else if (!obj.tex_data.empty() && (local_location == 6 || local_location == 7 || (obj.rgba && local_location == 8))) {
 			// uv
@@ -103,13 +99,13 @@ int buffer_object(Objects objects, object obj) {
 	return 0;
 }
 
-int buffer_objects(Objects objects) {
+int buffer_objects(Objects& objects) {
 	objects.set_vertex_buffer_size(objects.get_vbo_size());
 	objects.set_index_buffer_size(objects.get_ebo_size());
 
 	int i = 0;
-	int code;
-	for (auto obj = objects.get_objects().begin(); obj != objects.get_objects().end(); obj++) {
+	auto& container = objects.get_objects();
+	for (auto obj = container.begin(); obj != container.end(); obj++) {
 		if (buffer_object(objects, objects.get(obj->first))) {
 			return 1;
 		}
