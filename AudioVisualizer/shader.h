@@ -6,18 +6,22 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include <cerrno>
+#include <unordered_map>
+
+#include "VertexLayout.h"
 
 std::string get_file_contents(const char* filename);
 
 class Shader {
-public:
+private:
 	GLuint ID;
+public:
 	Shader(const char* vertexFile, const char* fragmentFile);
+	~Shader();
 
 	void Activate();
 	void Delete();
-	GLuint getID();
+	GLuint get_id();
 };
 
 #endif

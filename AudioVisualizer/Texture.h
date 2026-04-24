@@ -4,7 +4,7 @@
 #include<glad/glad.h>
 #include<stb/stb_image.h>
 
-#include"shaderClass.h"
+#include"shader.h"
 
 class Texture
 {
@@ -21,5 +21,7 @@ public:
 	void Unbind();
 	// Deletes a texture
 	void Delete();
+
+	GLuint get_ID();
 };
 #endif

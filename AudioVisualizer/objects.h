@@ -36,7 +36,7 @@ public:
 	void clear_buffers();
 
 	struct object get(unsigned short id);
-	std::unordered_map<unsigned short, object> get_objects();
+	std::unordered_map<unsigned short, object>& get_objects();
 	std::vector<GLfloat> get_vbo_vector();
 	std::vector<GLuint> get_ebo_vector();
 	GLfloat* get_vbo_array();
