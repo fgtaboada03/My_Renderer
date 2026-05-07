@@ -582,7 +582,6 @@
     <ClInclude Include="MultiCodecAudioDecoder.h" />
     <ClInclude Include="ObjectManager.h" />
     <ClInclude Include="engine.h" />
-    <ClInclude Include="RenderPass.h" />
     <ClInclude Include="texture.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="VAO.h" />
