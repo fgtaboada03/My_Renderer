@@ -55,7 +55,7 @@ public:
 		this->object_manager.add_obj(cords, color, tex, indices, is_rgba);
 	}
 
-	void commit() { this->buffer_manager.upload(this->object_manager.get_objects()); }
+	void commit() { this->buffer_manager.commit(this->object_manager.get_objects()); }
 	void draw(Camera& cam, float fov, float near, float far) { this->buffer_manager.draw(cam, fov, near, far, SHADER_TABLE); }
 };
 

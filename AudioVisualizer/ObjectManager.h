@@ -17,6 +17,9 @@ private:
 	unsigned short count{ 0 };
 
 public:
+	ObjectManager() = default;
+	~ObjectManager() = default;
+
 	object& at(unsigned short id) { return this->objects.at(id); }
 	const object& at(unsigned short id) const { return this->objects.at(id); }
 

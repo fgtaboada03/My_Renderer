@@ -20,43 +20,19 @@ struct MeshBuffers {
 	VAO vao;
 	VertexLayout layout;
 
-	bool empty() {
-		return vbo.empty();
-	}
+	void erase();
+	bool empty();
 
-	void bind() {
-		vbo.Bind();
-		ebo.Bind();
-		vao.Bind();
-	}
-	void unbind() {
-		vbo.Unbind();
-		ebo.Unbind();
-		vao.Unbind();
-	}
+	void append_vbo(GLfloat data);
+	void append_ebo(GLuint data);
 
-	void erase() {
-		vbo.Delete();
-		ebo.Delete();
-		vao.Delete();
-	}
+	void buffer_data();
 
-	void buffer_data() {
-		vbo.buffer_data();
-		ebo.buffer_data();
-	}
+	void bind();
+	void unbind();
 
-	void begin(Camera& cam, float fov, float near, float far, std::unordered_map<uint32_t, Shader> shader_table) {
-		Shader shader = shader_table.at(layout.flags);
-		shader.Activate();
-		cam.Matrix(fov, near, far, shader, "camMatrix");
-	}
-
-	void draw() {
-		bind();
-		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(ebo.size()), GL_UNSIGNED_INT, 0);
-		unbind();
-	}
+	void begin(Camera& cam, float fov, float near, float far, std::unordered_map<uint32_t, Shader> shader_table);
+	void draw();
 };
 
 class BufferManager {
@@ -69,7 +45,7 @@ public:
 	std::unordered_map<uint32_t, MeshBuffers> get();
 	void clear();
 
-	void upload(std::unordered_map<unsigned short, object>& objects);
+	void commit(std::unordered_map<unsigned short, object>& objects);
 	void draw(Camera& cam, float fov, float near, float far, std::unordered_map<uint32_t, Shader> shader_table);
 };
 

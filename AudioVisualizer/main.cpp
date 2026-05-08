@@ -49,11 +49,11 @@ int main() {
 
 
 	// set up vertex data (and buffer(s)) and configure vertex attributes
-	Objects objs;
+	Engine engine;
 	object tri = triangle();
 
-	objs.add_obj(tri);
-	objs.commit();
+	engine.add_obj(tri);
+	engine.commit();
 
 	// Texture Stuff
 	//std::string parentDir = (fs::current_path().fs::path::parent_path()).string();
@@ -76,7 +76,7 @@ int main() {
 
 		//popCat.Bind();
 
-		objs.draw(camera, 45.0f, 0.1f, 100.0f);
+		engine.draw(camera, 45.0f, 0.1f, 100.0f);
 
 		// glDrawArrays(GL_TRIANGLES, 0, 3);
 
