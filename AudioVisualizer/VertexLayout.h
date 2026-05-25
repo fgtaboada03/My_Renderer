@@ -54,6 +54,12 @@ struct VertexLayout {
 
 		return -1;
 	}
+	int get_offset_uv_byte() { return offset_uv * sizeof(GLfloat); }
+	int get_offset_color_byte() { return offset_color * sizeof(GLfloat); }
+	int get_offset_xyz_byte() { return offset_xyz * sizeof(GLfloat); }
+	int get_stride_byte() {
+		return stride * sizeof(GLfloat);
+	}
 	int color_components() const { return has_rgba() ? 4 : 3; }
 	void calculate_state() {
 		offset_xyz = 0;
@@ -122,6 +128,27 @@ struct VertexLayout {
 
 		calculate_state();
 	}
+	~VertexLayout() = default;
+	VertexLayout(const VertexLayout& other) : flags(other.flags) {
+		// RGB and RGBA are mutually exclusive
+		assert(!has_rgb() || !has_rgba() &&
+			"Use VERTEX_RGB or VERTEX_RGBA, not both");
+
+		calculate_state();
+	}
+	VertexLayout& operator=(const VertexLayout& other) {
+		if (this != &other) {
+			flags = other.flags;
+		}
+		// RGB and RGBA are mutually exclusive
+		assert(!has_rgb() || !has_rgba() &&
+			"Use VERTEX_RGB or VERTEX_RGBA, not both");
+
+		calculate_state();
+
+		return *this;
+	}
+
 };
 
 // ------------------------------------------------------------
@@ -136,11 +163,23 @@ struct object {
 	std::vector<GLuint>  indices;
 
 	size_t vbo_size() { return cords_data.size() + color_data.size() + tex_data.size(); }
+	size_t ebo_size() { return indices.size(); }
 
 	object() = default;
 	object(uint32_t flag) : layout(flag) {}
-	object(VertexLayout layout, std::vector<GLfloat> cords_data, std::vector<GLfloat> color_data, std::vector<GLfloat> tex_data, std::vector<GLuint> indices) {
-		this->layout = layout;
+	object(VertexLayout layout) : layout(layout) {}
+	object(uint32_t flag, std::vector<GLfloat> cords_data, std::vector<GLuint> indices, std::vector<GLfloat> color_data = {}, std::vector<GLfloat> tex_data = {}) : layout(flag) {
+		this->cords_data = cords_data;
+		this->indices = indices;
+
+		if (this->layout.has_color()) {
+			this->color_data = color_data;
+		}
+		if (this->layout.has_uv()) {
+			this->tex_data = tex_data;
+		}
+	}
+	object(VertexLayout layout, std::vector<GLfloat> cords_data, std::vector<GLuint> indices, std::vector<GLfloat> color_data = {}, std::vector<GLfloat> tex_data = {}) : layout(layout) {
 		this->cords_data = cords_data;
 		this->indices = indices;
 

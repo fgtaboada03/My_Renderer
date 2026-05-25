@@ -1,7 +1,5 @@
 #include"Camera.h"
 
-
-
 Camera::Camera(int width, int height, glm::vec3 position)
 {
 	Camera::width = width;
@@ -31,18 +29,22 @@ void Camera::Inputs(GLFWwindow* window)
 	// Handles key inputs
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
+		std::cout << "w" << std::endl;
 		Position += speed * Orientation;
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{
+		std::cout << "a" << std::endl;
 		Position += speed * -glm::normalize(glm::cross(Orientation, Up));
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
+		std::cout << "s" << std::endl;
 		Position += speed * -Orientation;
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
+		std::cout << "d" << std::endl;
 		Position += speed * glm::normalize(glm::cross(Orientation, Up));
 	}
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
@@ -67,11 +69,14 @@ void Camera::Inputs(GLFWwindow* window)
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 	{
 		// Hides mouse cursor
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+		//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+
+		std::cout << std::endl << "Orientation: " << Orientation.length() << std::endl;
 
 		// Prevents camera from jumping on the first click
 		if (firstClick)
 		{
+			std::cout << "First Click: position set to middle" << std::endl;
 			glfwSetCursorPos(window, (width / 2), (height / 2));
 			firstClick = false;
 		}
@@ -84,20 +89,36 @@ void Camera::Inputs(GLFWwindow* window)
 
 		// Normalizes and shifts the coordinates of the cursor such that they begin in the middle of the screen
 		// and then "transforms" them into degrees 
+
+		std::cout << "(mouseY - (height / 2)) / height : " << static_cast<float>((height / 2)) << std::endl;
+		std::cout << "(mouseX - (width / 2)) / width : " << static_cast<float>((width / 2)) << std::endl;
+
 		float rotX = sensitivity * (float)(mouseY - (height / 2)) / height;
-		float rotY = sensitivity * (float)(mouseX - (width / 2)) / width;
+		float rotY = sensitivity * (float)((mouseX - (width / 2)) / width);
 
 		// Calculates upcoming vertical change in the Orientation
 		glm::vec3 newOrientation = glm::rotate(Orientation, glm::radians(-rotX), glm::normalize(glm::cross(Orientation, Up)));
 
+		std::cout << "mouseX: " << mouseX << std::endl;
+		std::cout << "mouseY: " << mouseX << std::endl;
+		std::cout << "rotX: " << rotX << std::endl;
+		std::cout << "roty: " << rotY << std::endl;
+		std::cout << "newOrientation length: " << newOrientation.length() << std::endl;
+
+		std::cout << "abs(glm::angle(newOrientation, Up) - glm::radians(90.0f)): " << abs(glm::angle(newOrientation, Up) - glm::radians(90.0f)) << std::endl;
+		std::cout << "glm::radians(85.0f): " << glm::radians(85.0f) << std::endl;
+
 		// Decides whether or not the next vertical Orientation is legal or not
 		if (abs(glm::angle(newOrientation, Up) - glm::radians(90.0f)) <= glm::radians(85.0f))
 		{
+			std::cout << "Orientation = NewOrientation" << std::endl;
 			Orientation = newOrientation;
 		}
 
 		// Rotates the Orientation left and right
 		Orientation = glm::rotate(Orientation, glm::radians(-rotY), Up);
+
+		std::cout << "Orientation: " << Orientation.length() << std::endl;
 
 		// Sets mouse cursor to the middle of the screen so that it doesn't end up roaming around
 		glfwSetCursorPos(window, (width / 2), (height / 2));

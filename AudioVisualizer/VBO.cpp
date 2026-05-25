@@ -4,10 +4,21 @@ VBO::VBO() {
 	glGenBuffers(1, &ID);
 }
 
+VBO::~VBO() {
+	Delete();
+}
+
+GLuint VBO::get_id() {
+	return this->ID;
+}
+
 std::vector<GLfloat> VBO::get_vbo() {
 	return this->vbo;
 }
 
+GLfloat* VBO::data() {
+	return vbo.data();
+}
 
 bool VBO::empty() {
 	return this->vbo.empty();
@@ -15,8 +26,15 @@ bool VBO::empty() {
 
 void VBO::buffer_data() {
 	this->vbo.shrink_to_fit();
+
+	std::cout << "\nvbo:\n" << this->vbo.size() << std::endl << this->vbo.capacity() << std::endl;
+
+	for (int i = 0; i < this->vbo.size(); i++) {
+		std::cout << this->vbo.data()[i] << std::endl;
+	}
+
 	glBindBuffer(GL_ARRAY_BUFFER, ID);
-	glBufferData(GL_ARRAY_BUFFER, this->vbo.size() * sizeof(GLfloat), this->vbo.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vbo.size() * sizeof(GLuint), this->vbo.data(), GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 

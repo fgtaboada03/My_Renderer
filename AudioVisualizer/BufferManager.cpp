@@ -1,13 +1,33 @@
 #include "BufferManager.h"
 
+GLuint MeshBuffers::get_vbo_id() {
+	return this->vbo.get_id();
+}
+
+std::vector<GLfloat> MeshBuffers::get_vbo() {
+	return this->vbo.get_vbo();
+}
+
+GLuint MeshBuffers::get_ebo_id() {
+	return this->ebo.get_id();
+}
+
+std::vector<GLuint> MeshBuffers::get_ebo() {
+	return this->ebo.get_ebo();
+}
+
+GLuint MeshBuffers::get_vao_id() {
+	return this->vao.get_id();
+}
+
 void MeshBuffers::erase() {
-	vbo.Delete();
-	ebo.Delete();
-	vao.Delete();
+	this->vbo.Delete();
+	this->ebo.Delete();
+	this->vao.Delete();
 }
 
 bool MeshBuffers::empty() {
-	return vbo.empty();
+	return this->vbo.empty();
 }
 
 void MeshBuffers::append_vbo(GLfloat data) {
@@ -19,31 +39,76 @@ void MeshBuffers::append_ebo(GLuint data) {
 }
 
 void MeshBuffers::buffer_data() {
-	vbo.buffer_data();
-	ebo.buffer_data();
+	this->vbo.buffer_data();
+	this->ebo.buffer_data();
 }
 
 void MeshBuffers::bind() {
-	vbo.Bind();
-	ebo.Bind();
-	vao.Bind();
+	this->vao.Bind();
+	this->vbo.Bind();
+	this->ebo.Bind();
 }
+
 void MeshBuffers::unbind() {
-	vbo.Unbind();
-	ebo.Unbind();
-	vao.Unbind();
+	this->vbo.Unbind();
+	this->ebo.Unbind();
+	this->vao.Unbind();
 }
 
-void MeshBuffers::begin(Camera& cam, float fov, float near, float far, std::unordered_map<uint32_t, Shader> shader_table) {
-	Shader shader = shader_table.at(layout.flags);
+void MeshBuffers::EnableAttribs() {
+	glEnableVertexAttribArray(layout.loc_xyz);
+
+	if (this->layout.has_color()) {
+		glEnableVertexAttribArray(layout.loc_color);
+	}
+	if (this->layout.has_uv()) {
+		glEnableVertexAttribArray(layout.loc_uv);
+	}
+}
+
+void MeshBuffers::DisableAttribs() {
+	glDisableVertexAttribArray(layout.loc_xyz);
+
+	if (this->layout.has_color()) {
+		glDisableVertexAttribArray(layout.loc_color);
+	}
+	if (this->layout.has_uv()) {
+		glDisableVertexAttribArray(layout.loc_uv);
+	}
+}
+
+void MeshBuffers::draw(Camera& cam, GLFWwindow* window, float fov, float near, float far, std::unordered_map<uint32_t, Shader>& shader_table) {
+	Shader& shader = shader_table.at(layout.flags);
+
+	GLboolean doesVAOExist = static_cast<bool>(glIsVertexArray(vao.get_id()));
+
+	if (GL_FALSE == doesVAOExist) {
+		std::cout << "false" << std::endl;
+	}
+	else if (GL_TRUE == doesVAOExist) {
+		std::cout << "true" << std::endl;
+	}
+
+	//GLfloat* data;
+
+	//glGetBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vbo.data()), data);
+
+	//for (int i = 0; i < sizeof(data) / sizeof(GLfloat); i++) {
+	//	std::cout << "i: " << data[i] << std::endl;
+	//}
+
 	shader.Activate();
+	cam.Inputs(window);
 	cam.Matrix(fov, near, far, shader, "camMatrix");
-}
+	this->bind();
+	this->EnableAttribs();
 
-void MeshBuffers::draw() {
-	bind();
-	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(ebo.size()), GL_UNSIGNED_INT, 0);
-	unbind();
+	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(this->get_ebo().size()), GL_UNSIGNED_INT, 0);
+	//glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(this->get_ebo().size()));
+
+	this->DisableAttribs();
+	this->unbind();
+	shader.Deactivate();
 }
 
 BufferManager::~BufferManager() {
@@ -57,17 +122,18 @@ std::unordered_map<uint32_t, MeshBuffers> BufferManager::get() {
 }
 
 void BufferManager::clear() {
-	meshes.clear();
+	this->meshes.clear();
 }
 
 void BufferManager::commit(std::unordered_map<unsigned short, object>& objects) {
-	VertexLayout layout;
-
+	int offset = 0;
+	
+	// Interweaving Buffer Data
 	for (auto& it : objects) {
 		object& obj = it.second;
 		VertexLayout layout = obj.layout;
-
 		MeshBuffers& mesh_buffer = meshes[layout.flags];
+
 		mesh_buffer.layout = layout;
 
 		int i, partition, n_strides, vector_index, stride_local_index;
@@ -94,45 +160,56 @@ void BufferManager::commit(std::unordered_map<unsigned short, object>& objects) 
 			}
 		}
 
+		// Consider Object Offset of indices.
+		// Each Mesh has it's local index but not
+		// it's global buffer index.
 		for (GLuint data : obj.indices) {
 			mesh_buffer.append_ebo(data);
 		}
+
+		offset += static_cast<int>(obj.vbo_size()) / layout.stride;
 	}
 
-	for (auto mesh : meshes) {
+	// Sending to 
+	for (auto& mesh : meshes) {
 		MeshBuffers& mesh_buffer = mesh.second;
-		layout = mesh.second.layout;
+		VertexLayout& layout = mesh.second.layout;
 
 		if (mesh_buffer.empty()) {
 			continue;
 		}
 
+		mesh_buffer.vbo.Bind();
+		mesh_buffer.vao.Bind();
 		mesh_buffer.buffer_data();
-		mesh_buffer.bind();
 
 		// Link XYZ
-		VertexLayout& layout = mesh.second.layout;
-		mesh_buffer.vao.LinkAttrib(mesh_buffer.vbo, layout.loc_xyz, 3, GL_FLOAT, layout.stride, (void*)0);
-
-		// Link Color
-		if (layout.has_color()) {
-			mesh_buffer.vao.LinkAttrib(mesh_buffer.vbo, layout.loc_color, layout.color_components(), GL_FLOAT, layout.stride, (void*)(layout.offset_color * sizeof(float)));
-		}
-
-		// Link UV
-		if (layout.has_uv()) {
-			mesh_buffer.vao.LinkAttrib(mesh_buffer.vbo, layout.loc_uv, 2, GL_FLOAT, layout.stride, (void*)(layout.offset_uv * sizeof(float)));
-		}
-
+		mesh_buffer.vao.LinkAttribs(mesh_buffer.vbo, layout);
 		mesh_buffer.unbind();
 	}
+
+	//for (auto mesh : meshes) {
+	//	MeshBuffers& mesh_buffer = mesh.second;
+	//	VertexLayout layout = mesh.second.layout;
+
+	//	std::cout << "vbo id: " << mesh_buffer.get_vbo_id() << std::endl;
+
+	//	for (auto data : mesh_buffer.get_vbo()) {
+	//		std::cout << data << std::endl;
+	//	}
+
+	//	std::cout << "ebo id: " << mesh_buffer.get_ebo_id() << std::endl;
+
+	//	for (auto data : mesh_buffer.get_ebo()) {
+	//		std::cout << data << std::endl;
+	//	}
+
+	//	std::cout << "vao id: " << mesh_buffer.get_vao_id() << std::endl;
+	//}
 }
 
-void BufferManager::draw(Camera& cam, float fov, float near, float far, std::unordered_map<uint32_t, Shader> shader_table) {
+void BufferManager::draw(Camera& cam, GLFWwindow* window, float fov, float near, float far, std::unordered_map<uint32_t, Shader>& shader_table) {
 	for (auto& it : meshes) {
-		MeshBuffers mesh_buffer = it.second;
-
-		mesh_buffer.begin(cam, fov, near, far, shader_table);
-		mesh_buffer.draw();
+		it.second.draw(cam, window, fov, near, far, shader_table);
 	}
 }

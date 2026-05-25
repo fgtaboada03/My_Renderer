@@ -74,10 +74,10 @@
     <None Include="yellow.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="default.frag">
+    <None Include="rgb_uv.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="default.vert">
+    <None Include="rgb_uv.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="Libraries\include\glm\detail\func_common.inl">
@@ -433,6 +433,36 @@
     </None>
     <None Include="Libraries\lib\swscale-9.def">
       <Filter>Source Files</Filter>
+    </None>
+    <None Include="cords.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="cords.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="rgb.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="rgb.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="rgba.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="rgba.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="rgba_uv.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="rgba_uv.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="uv.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="uv.vert">
+      <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

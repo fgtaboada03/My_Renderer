@@ -160,8 +160,16 @@
     <ClCompile Include="VBO.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="default.frag" />
-    <None Include="default.vert" />
+    <None Include="cords.frag" />
+    <None Include="cords.vert" />
+    <None Include="rgb.frag" />
+    <None Include="rgb.vert" />
+    <None Include="rgba.frag" />
+    <None Include="rgba.vert" />
+    <None Include="rgba_uv.frag" />
+    <None Include="rgba_uv.vert" />
+    <None Include="rgb_uv.frag" />
+    <None Include="rgb_uv.vert" />
     <None Include="Libraries\include\glm\detail\func_common.inl" />
     <None Include="Libraries\include\glm\detail\func_common_simd.inl" />
     <None Include="Libraries\include\glm\detail\func_exponential.inl" />
@@ -280,6 +288,8 @@
     <None Include="Libraries\lib\avutil-60.def" />
     <None Include="Libraries\lib\swresample-6.def" />
     <None Include="Libraries\lib\swscale-9.def" />
+    <None Include="uv.frag" />
+    <None Include="uv.vert" />
     <None Include="yellow.frag" />
   </ItemGroup>
   <ItemGroup>

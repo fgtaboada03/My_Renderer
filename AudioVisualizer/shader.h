@@ -20,6 +20,7 @@ public:
 	~Shader();
 
 	void Activate();
+	void Deactivate();
 	void Delete();
 	GLuint get_id();
 };

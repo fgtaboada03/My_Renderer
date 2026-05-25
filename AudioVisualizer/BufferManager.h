@@ -20,8 +20,18 @@ struct MeshBuffers {
 	VAO vao;
 	VertexLayout layout;
 
-	void erase();
+	MeshBuffers() = default;
+	~MeshBuffers() = default;
+
 	bool empty();
+
+	GLuint get_vbo_id();
+	std::vector<GLfloat> get_vbo();
+	GLuint get_ebo_id();
+	std::vector<GLuint> get_ebo();
+	GLuint get_vao_id();
+
+	void erase();
 
 	void append_vbo(GLfloat data);
 	void append_ebo(GLuint data);
@@ -31,8 +41,10 @@ struct MeshBuffers {
 	void bind();
 	void unbind();
 
-	void begin(Camera& cam, float fov, float near, float far, std::unordered_map<uint32_t, Shader> shader_table);
-	void draw();
+	void EnableAttribs();
+	void DisableAttribs();
+
+	void draw(Camera& cam, GLFWwindow* window, float fov, float near, float far, std::unordered_map<uint32_t, Shader>& shader_table);
 };
 
 class BufferManager {
@@ -46,7 +58,7 @@ public:
 	void clear();
 
 	void commit(std::unordered_map<unsigned short, object>& objects);
-	void draw(Camera& cam, float fov, float near, float far, std::unordered_map<uint32_t, Shader> shader_table);
+	void draw(Camera& cam, GLFWwindow* window, float fov, float near, float far, std::unordered_map<uint32_t, Shader>& shader_table);
 };
 
 #endif

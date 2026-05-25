@@ -3,11 +3,7 @@
 
 #include "VertexLayout.h"
 
-inline object triangle(int scale = 1, float offsetX = 0, float offsetY = 0, float offsetZ = 0) {
-	//VertexLayout layout{ VERTEX_XYZ };
-	//VertexLayout layout{ VERTEX_XYZ | VERTEX_RGB };
-	VertexLayout layout{ VERTEX_XYZ | VERTEX_RGB | VERTEX_UV };
-
+inline object triangle(VertexLayout layout = VertexLayout(VERTEX_XYZ), int scale = 1, float offsetX = 0, float offsetY = 0, float offsetZ = 0) {
 	std::vector<GLfloat> xyz = {
 		(0.5f * scale) + offsetX,  (-0.5f * scale) + offsetY,   (0.5f * scale) + offsetZ,
 		(-0.5f * scale) + offsetX,  (-0.5f * scale) + offsetY,   (0.5f * scale) + offsetZ,
@@ -15,9 +11,9 @@ inline object triangle(int scale = 1, float offsetX = 0, float offsetY = 0, floa
 	};
 
 	std::vector<GLfloat> rgb = {
-		1.0f, 1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f
+		1.0f, 0.5f, 0.2f,
+		1.0f, 0.5f, 0.2f,
+		1.0f, 0.5f, 0.2f
 	};
 
 	std::vector<GLfloat> uv = {
@@ -30,15 +26,12 @@ inline object triangle(int scale = 1, float offsetX = 0, float offsetY = 0, floa
 		0, 1, 2
 	};
 
-	object obj(layout, xyz, rgb, uv, indices);
+	object obj(layout, xyz, indices, rgb, uv);
 
 	return obj;
 }
 
-inline object square(int scale = 1, float offsetX = 0, float offsetY = 0, float offsetZ = 0) {
-	//VertexLayout layout{ VERTEX_XYZ | VERTEX_RGB };
-	VertexLayout layout{ VERTEX_XYZ | VERTEX_RGB | VERTEX_UV };
-
+inline object square(VertexLayout layout = VertexLayout(VERTEX_XYZ), int scale = 1, float offsetX = 0, float offsetY = 0, float offsetZ = 0) {
 	std::vector<GLfloat> xyz = {
 		(0.5f * scale) + offsetX, (-0.5f * scale) + offsetY,  (0.5f * scale) + offsetZ,
 		(0.5f * scale) + offsetX, (0.5f * scale) + offsetY,  (0.5f * scale) + offsetZ,
@@ -65,15 +58,12 @@ inline object square(int scale = 1, float offsetX = 0, float offsetY = 0, float 
 		3, 2, 1
 	};
 
-	object obj(layout, xyz, rgb, uv, indices);
+	object obj(layout, xyz, indices, rgb, uv);
 
 	return obj;
 }
 
-inline object cube(int scale = 1, float offsetX = 0, float offsetY = 0, float offsetZ = 0) {
-	//VertexLayout layout{ VERTEX_XYZ | VERTEX_RGB };
-	VertexLayout layout{ VERTEX_XYZ | VERTEX_RGB | VERTEX_UV };
-
+inline object cube(VertexLayout layout = VertexLayout(VERTEX_XYZ), int scale = 1, float offsetX = 0, float offsetY = 0, float offsetZ = 0) {
 	std::vector<GLfloat> xyz = {
 		(0.5f * scale) + offsetX, (-0.5f * scale) + offsetY,  (0.5f * scale) + offsetZ,
 		(0.5f * scale) + offsetX, (0.5f * scale) + offsetY,  (0.5f * scale) + offsetZ,
@@ -119,7 +109,7 @@ inline object cube(int scale = 1, float offsetX = 0, float offsetY = 0, float of
 		6, 4, 2
 	};
 
-	object obj(layout, xyz, rgb, uv, indices);
+	object obj(layout, xyz, indices, rgb, uv);
 
 	return obj;
 }

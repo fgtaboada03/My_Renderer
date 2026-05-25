@@ -4,11 +4,23 @@ VAO::VAO() {
 	glGenVertexArrays(1, &ID);
 }
 
-void VAO::LinkAttrib(VBO& VBO, GLuint layout, GLuint numComponents, GLenum type, GLsizei stride, void* offset) {
+GLuint VAO::get_id() {
+	return this->ID;
+}
+
+void VAO::LinkAttribs(VertexLayout& layout) {
+	glVertexAttribPointer(layout.loc_xyz, 3, GL_FLOAT, GL_FALSE, layout.get_stride_byte(), (void*)0);
+
+	// Link Color
+	if (layout.has_color()) {
+		glVertexAttribPointer(layout.loc_color, layout.color_components(), GL_FLOAT, GL_FALSE, layout.get_stride_byte(), (void*)(layout.get_offset_color_byte()));
+	}
+
+	// Link UV
+	if (layout.has_uv()) {
+		glVertexAttribPointer(layout.loc_uv, 2, GL_FLOAT, GL_FALSE, layout.get_stride_byte(), (void*)(layout.get_offset_uv_byte()));
+	}
 	VBO.Bind();
-	glVertexAttribPointer(layout, numComponents, type, GL_FALSE, stride, offset);
-	glEnableVertexAttribArray(layout);
-	VBO.Unbind();
 }
 
 void VAO::Bind() {

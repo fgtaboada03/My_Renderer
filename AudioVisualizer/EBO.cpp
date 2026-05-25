@@ -4,10 +4,33 @@ EBO::EBO() {
 	glGenBuffers(1, &ID);
 }
 
+EBO::~EBO() {
+	Delete();
+}
+
+GLuint EBO::get_id() {
+	return this->ID;
+}
+
+std::vector<GLuint> EBO::get_ebo() {
+	return this->ebo;
+}
+
+GLuint* EBO::data() {
+	return ebo.data();
+}
+
 void EBO::buffer_data() {
 	this->ebo.shrink_to_fit();
+
+	std::cout << "\nebo:\n" << this->ebo.size() << std::endl << this->ebo.capacity() << std::endl;
+
+	for (int i = 0; i < this->ebo.size(); i++) {
+		std::cout << this->ebo.data()[i] << std::endl;
+	}
+
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->ebo.size() * sizeof(GLuint), this->ebo.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, ebo.size() * sizeof(GLuint), this->ebo.data(), GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 

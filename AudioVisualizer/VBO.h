@@ -3,6 +3,7 @@
 
 #include <glad/glad.h>
 #include <vector>
+#include <iostream>
 
 class VBO {
 private:
@@ -11,8 +12,11 @@ private:
 
 public:
 	VBO();
+	~VBO();
 
+	GLuint get_id();
 	std::vector<GLfloat> get_vbo();
+	GLfloat* data();
 
 	bool empty();
 

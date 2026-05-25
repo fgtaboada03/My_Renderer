@@ -4,13 +4,18 @@
 
 #include <glad/glad.h>
 #include "VBO.h"
+#include "VertexLayout.h"
 
 class VAO {
-public:
+
+private:
 	GLuint ID;
+
+public:
 	VAO();
 
-	void LinkAttrib(VBO& VBO, GLuint layout, GLuint numComponents, GLenum type, GLsizei stride, void* offset);
+	GLuint get_id();
+	void LinkAttribs(VertexLayout& layout);
 	void Bind();
 	void Unbind();
 	void Delete();

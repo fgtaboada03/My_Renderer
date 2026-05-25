@@ -2,6 +2,12 @@
 #define ENGINE_H
 
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <stb/stb_image.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include <unordered_map>
 #include <vector>
 
@@ -14,21 +20,93 @@
 // ------------------------------------------------------------
 class Engine {
 private:
+	unsigned int SCR_WIDTH;
+	unsigned int SCR_HEIGHT;
+	std::unordered_map<uint32_t, Shader> SHADER_TABLE;
+
+	GLFWwindow* window = nullptr;
+	Camera camera;
+
 	ObjectManager object_manager;
 	BufferManager buffer_manager;
-	const std::unordered_map<uint32_t, Shader> SHADER_TABLE = {
-		{ VERTEX_XYZ							, Shader("default.vert", "default.frag") },
-		{ VERTEX_XYZ | VERTEX_RGB				, Shader("default.vert", "default.frag") },
-		{ VERTEX_XYZ | VERTEX_RGB | VERTEX_UV	, Shader("default.vert", "default.frag") },
-		{ VERTEX_XYZ | VERTEX_RGBA				, Shader("default.vert", "default.frag") },
-		{ VERTEX_XYZ | VERTEX_RGBA | VERTEX_UV	, Shader("default.vert", "default.frag") },
-		{ VERTEX_XYZ | VERTEX_UV				, Shader("default.vert", "default.frag") }
-	};
 
 public:
-	Engine() = default;
-	~Engine() = default;
+	Engine(unsigned int screen_width, unsigned int screen_height) :
+		SCR_WIDTH(screen_width),
+		SCR_HEIGHT(screen_height),
+		camera (SCR_WIDTH, SCR_HEIGHT, glm::vec3(0.0f, 0.0f, 2.0f))
+	{}
+	~Engine() {
+		glfwTerminate();
+	}
+
+	int init() {
+		// glfw: initialize and configure
+		// ------------------------------
+		glfwInit();
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+		// glfw window creation
+		this->window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "GoobyGoop", NULL, NULL);
+		// Error Check
+		if (window == NULL) {
+			std::cout << "Failed to create GLFW window" << std::endl;
+			glfwTerminate();
+			return 1;	
+		}
+		// Introduce Window to current Context
+		glfwMakeContextCurrent(window);
+
+		// glad: load all OpenGL function pointers
+		// ---------------------------------------
+		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+			std::cout << "Failed to initialize GLAD" << std::endl;
+			return 1;
+		};
+		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+
+		this->SHADER_TABLE = {
+			{ VERTEX_XYZ							, Shader("cords.vert", "cords.frag") },
+			{ VERTEX_XYZ | VERTEX_RGB				, Shader("rgb.vert", "rgb.frag") },
+			{ VERTEX_XYZ | VERTEX_RGB | VERTEX_UV	, Shader("rgb_uv.vert", "rgb_uv.frag") },
+			{ VERTEX_XYZ | VERTEX_RGBA				, Shader("rgba.vert", "rgba.frag") },
+			{ VERTEX_XYZ | VERTEX_RGBA | VERTEX_UV	, Shader("rgba_uv.vert", "rgba_uv.frag") },
+			{ VERTEX_XYZ | VERTEX_UV				, Shader("uv.vert", "uv.frag") }
+		};
+
+		return 0;
+	}
 	
+	void run(float fov = 45.0f, float near = 0.1f, float far = 100.0f) {
+		// Depth Test
+		glEnable(GL_DEPTH_TEST);
+
+		// render loop
+		// -----------
+		while (!glfwWindowShouldClose(window)) {
+			// render
+			// -----------
+			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+			//this->camera.Inputs(window);
+
+			//popCat.Bind();
+
+			std::cout << "about to draw" << std::endl;
+
+			this->buffer_manager.draw(this->camera, this->window, fov, near, far, this->SHADER_TABLE);
+
+			// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+			glfwSwapBuffers(window);
+			glfwPollEvents();
+		}
+	}
+
+	void commit() { this->buffer_manager.commit(this->object_manager.get_objects()); }
+
 	ObjectManager get_object_mng() { return this->object_manager; }
 	BufferManager get_buffer_mng() { return this->buffer_manager; }
 
@@ -54,9 +132,6 @@ public:
 	void add_obj(std::vector<GLfloat> cords, std::vector<GLfloat> color, std::vector<GLfloat> tex, std::vector<GLuint> indices, bool is_rgba = false) {
 		this->object_manager.add_obj(cords, color, tex, indices, is_rgba);
 	}
-
-	void commit() { this->buffer_manager.commit(this->object_manager.get_objects()); }
-	void draw(Camera& cam, float fov, float near, float far) { this->buffer_manager.draw(cam, fov, near, far, SHADER_TABLE); }
 };
 
 #endif
