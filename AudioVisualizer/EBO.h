@@ -6,27 +6,27 @@
 #include <iostream>
 
 class EBO {
-	GLuint ID;
-	std::vector<GLuint> ebo;
+	unsigned int ID;
+	std::vector<unsigned int> ebo;
 
 public:
 	EBO();
 	~EBO();
 
-	GLuint get_id();
-	std::vector<GLuint> get_ebo();
-	GLuint* data();
-	void buffer_data();
-	void copy_vector(std::vector<GLuint> vector);
-	void append_data(GLuint data);
-	void insert_data(int index, GLuint data);
+	unsigned int get_id();
+	std::vector<unsigned int> get_ebo();
+	unsigned int* data();
+	int buffer_data();
+	void copy_vector(std::vector<unsigned int> vector);
+	void append_data(unsigned int data);
+	void insert_data(int index, unsigned int data);
 	
 	int size() {
 		return static_cast<int>(this->ebo.size());
 	}
 
-	void Bind();
-	void Unbind();
+	void bind();
+	void unbind();
 	void Delete();
 };
 

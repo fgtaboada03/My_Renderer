@@ -3,7 +3,7 @@
 
 #include "VertexLayout.h"
 
-inline object triangle(VertexLayout layout = VertexLayout(VERTEX_XYZ), int scale = 1, float offsetX = 0, float offsetY = 0, float offsetZ = 0) {
+inline mesh triangle(VertexLayout layout = VertexLayout(VERTEX_XYZ), int scale = 1, float offsetX = 0, float offsetY = 0, float offsetZ = 0) {
 	std::vector<GLfloat> xyz = {
 		(0.5f * scale) + offsetX,  (-0.5f * scale) + offsetY,   (0.5f * scale) + offsetZ,
 		(-0.5f * scale) + offsetX,  (-0.5f * scale) + offsetY,   (0.5f * scale) + offsetZ,
@@ -26,12 +26,12 @@ inline object triangle(VertexLayout layout = VertexLayout(VERTEX_XYZ), int scale
 		0, 1, 2
 	};
 
-	object obj(layout, xyz, indices, rgb, uv);
+	mesh mesh(layout, xyz, indices, rgb, uv);
 
-	return obj;
+	return mesh;
 }
 
-inline object square(VertexLayout layout = VertexLayout(VERTEX_XYZ), int scale = 1, float offsetX = 0, float offsetY = 0, float offsetZ = 0) {
+inline mesh square(VertexLayout layout = VertexLayout(VERTEX_XYZ), int scale = 1, float offsetX = 0, float offsetY = 0, float offsetZ = 0) {
 	std::vector<GLfloat> xyz = {
 		(0.5f * scale) + offsetX, (-0.5f * scale) + offsetY,  (0.5f * scale) + offsetZ,
 		(0.5f * scale) + offsetX, (0.5f * scale) + offsetY,  (0.5f * scale) + offsetZ,
@@ -58,12 +58,12 @@ inline object square(VertexLayout layout = VertexLayout(VERTEX_XYZ), int scale =
 		3, 2, 1
 	};
 
-	object obj(layout, xyz, indices, rgb, uv);
+	mesh mesh(layout, xyz, indices, rgb, uv);
 
-	return obj;
+	return mesh;
 }
 
-inline object cube(VertexLayout layout = VertexLayout(VERTEX_XYZ), int scale = 1, float offsetX = 0, float offsetY = 0, float offsetZ = 0) {
+inline mesh cube(VertexLayout layout = VertexLayout(VERTEX_XYZ), int scale = 1, float offsetX = 0, float offsetY = 0, float offsetZ = 0) {
 	std::vector<GLfloat> xyz = {
 		(0.5f * scale) + offsetX, (-0.5f * scale) + offsetY,  (0.5f * scale) + offsetZ,
 		(0.5f * scale) + offsetX, (0.5f * scale) + offsetY,  (0.5f * scale) + offsetZ,
@@ -109,9 +109,9 @@ inline object cube(VertexLayout layout = VertexLayout(VERTEX_XYZ), int scale = 1
 		6, 4, 2
 	};
 
-	object obj(layout, xyz, indices, rgb, uv);
+	mesh mesh(layout, xyz, indices, rgb, uv);
 
-	return obj;
+	return mesh;
 }
 
 #endif

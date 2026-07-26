@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 #include <cassert>
 #include <vector>
+#include <cstdint>
 
 // ------------------------------------------------------------
 //  Attrib flags  (combine with |)
@@ -54,11 +55,23 @@ struct VertexLayout {
 
 		return -1;
 	}
-	int get_offset_uv_byte() { return offset_uv * sizeof(GLfloat); }
-	int get_offset_color_byte() { return offset_color * sizeof(GLfloat); }
-	int get_offset_xyz_byte() { return offset_xyz * sizeof(GLfloat); }
+	const void* get_uv_offset_vao() { 
+		int byte_offset = offset_uv * sizeof(float);
+		const void* ptr = &byte_offset;
+		return ptr;
+	}
+	const void* get_color_offset_vao() {
+		int byte_offset = offset_color * sizeof(float);
+		const void* ptr = &byte_offset;
+		return ptr;
+	}
+	const void* get_xyz_offset_vao() {
+		int byte_offset = offset_xyz * sizeof(float);
+		const void* ptr = &byte_offset;
+		return ptr;
+	}
 	int get_stride_byte() {
-		return stride * sizeof(GLfloat);
+		return stride * sizeof(float);
 	}
 	int color_components() const { return has_rgba() ? 4 : 3; }
 	void calculate_state() {
@@ -154,42 +167,28 @@ struct VertexLayout {
 // ------------------------------------------------------------
 //  Object — holds object data
 // ------------------------------------------------------------
-struct object {
+struct mesh {
 	struct VertexLayout layout;
 
-	std::vector<GLfloat> cords_data;
-	std::vector<GLfloat> color_data;
-	std::vector<GLfloat> tex_data;
-	std::vector<GLuint>  indices;
+	std::vector<float> cord_data;
+	std::vector<float> color_data;
+	std::vector<float> tex_data;
+	std::vector<unsigned int>  indices;
 
-	size_t vbo_size() { return cords_data.size() + color_data.size() + tex_data.size(); }
+	mesh() = default;
+	mesh(uint32_t flag) : layout(flag) {}
+	mesh(VertexLayout layout) : layout(layout) {}
+	mesh(VertexLayout layout, std::vector<float> cord_data, std::vector<unsigned int> indices, std::vector<float> color_data = {}, std::vector<float> tex_data = {}) : layout(layout), cord_data(cord_data), indices(indices) {
+		if (this->layout.has_color()) {
+			this->color_data = color_data;
+		}
+		if (this->layout.has_uv()) {
+			this->tex_data = tex_data;
+		}
+	}
+
+	size_t vbo_size() { return cord_data.size() + color_data.size() + tex_data.size(); }
 	size_t ebo_size() { return indices.size(); }
-
-	object() = default;
-	object(uint32_t flag) : layout(flag) {}
-	object(VertexLayout layout) : layout(layout) {}
-	object(uint32_t flag, std::vector<GLfloat> cords_data, std::vector<GLuint> indices, std::vector<GLfloat> color_data = {}, std::vector<GLfloat> tex_data = {}) : layout(flag) {
-		this->cords_data = cords_data;
-		this->indices = indices;
-
-		if (this->layout.has_color()) {
-			this->color_data = color_data;
-		}
-		if (this->layout.has_uv()) {
-			this->tex_data = tex_data;
-		}
-	}
-	object(VertexLayout layout, std::vector<GLfloat> cords_data, std::vector<GLuint> indices, std::vector<GLfloat> color_data = {}, std::vector<GLfloat> tex_data = {}) : layout(layout) {
-		this->cords_data = cords_data;
-		this->indices = indices;
-
-		if (this->layout.has_color()) {
-			this->color_data = color_data;
-		}
-		if (this->layout.has_uv()) {
-			this->tex_data = tex_data;
-		}
-	}
 };
 
 #endif

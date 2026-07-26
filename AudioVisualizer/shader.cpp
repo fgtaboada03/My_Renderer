@@ -27,7 +27,7 @@ Shader::Shader(const char* vertexFile, const char* fragmentFile) {
 	// build and compile our shader program
 	// ------------------------------------
 	// Vertex Shader
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &vertexSource, NULL);
 	glCompileShader(vertexShader);
 	// check for shader compile errors
@@ -41,7 +41,7 @@ Shader::Shader(const char* vertexFile, const char* fragmentFile) {
 	}
 
 	// Fragment Shader
-	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
 	glCompileShader(fragmentShader);
 	// check for shader compile errors
@@ -88,6 +88,6 @@ void Shader::Delete() {
 	glDeleteProgram(ID);
 }
 
-GLuint Shader::get_id() {
+unsigned int Shader::get_id() {
 	return this->ID;
 }

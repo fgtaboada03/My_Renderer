@@ -14,7 +14,7 @@ std::string get_file_contents(const char* filename);
 
 class Shader {
 private:
-	GLuint ID;
+	unsigned int ID;
 public:
 	Shader(const char* vertexFile, const char* fragmentFile);
 	~Shader();
@@ -22,7 +22,7 @@ public:
 	void Activate();
 	void Deactivate();
 	void Delete();
-	GLuint get_id();
+	unsigned int get_id();
 };
 
 #endif

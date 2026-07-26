@@ -1,0 +1,5 @@
+Each Permutation of Buffer Types needs a shader. Create the shaders for each shader permutation.
+
+.dds (texture) file support
+.tga (image) file support
+.obj (3d scene) file support

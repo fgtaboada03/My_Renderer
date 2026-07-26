@@ -16,4 +16,4 @@ void main()
 	colors = aColor;
 
 	texCoord = aTex;
-}
+};

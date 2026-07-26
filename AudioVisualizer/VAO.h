@@ -15,9 +15,9 @@ public:
 	VAO();
 
 	GLuint get_id();
-	void LinkAttribs(VertexLayout& layout);
-	void Bind();
-	void Unbind();
+	int LinkAttribs(VertexLayout& layout);
+	void bind();
+	void unbind();
 	void Delete();
 };
 

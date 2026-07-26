@@ -9,4 +9,4 @@ in vec4 colors;
 void main()
 {
 	FragColor = colors;
-}
+};

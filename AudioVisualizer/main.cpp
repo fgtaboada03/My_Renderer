@@ -18,12 +18,14 @@ namespace fs = std::filesystem;
 #include "VertexLayout.h"
 
 // Settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 800;
 
 int main() {
 	// set up vertex data (and buffer(s)) and configure vertex attributes
-	Engine engine(SCR_WIDTH, SCR_HEIGHT);
+
+	int intial_scr_width = 800;
+	int intial_scr_height = 800;
+
+	Engine engine(intial_scr_width, intial_scr_height);
 
 	if (engine.init()) {
 		return 1;
@@ -31,12 +33,10 @@ int main() {
 
 	VertexLayout layout = VertexLayout(VERTEX_XYZ | VERTEX_RGB);
 
-	object shape = triangle(layout);
+	mesh tri = triangle(layout);
 
-	engine.add_obj(shape);
-	std::cout << "object stage" << std::endl;
+ 	engine.add_mesh(tri);
 	engine.commit();
-	std::cout << "object committed" << std::endl;
 
 	// Texture Stuff
 	//std::string parentDir = (fs::current_path().fs::path::parent_path()).string();
@@ -44,9 +44,7 @@ int main() {
 
 	// render loop
 	// -----------
-	std::cout << "running" << std::endl;
 	engine.run();
-	std::cout << "program end" << std::endl;	
 
 	//popCat.Delete();
 

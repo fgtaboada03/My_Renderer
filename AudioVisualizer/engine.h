@@ -12,7 +12,7 @@
 #include <vector>
 
 #include "BufferManager.h"
-#include "ObjectManager.h"
+#include "MeshManager.h"
 #include "shader.h"
 
 // ------------------------------------------------------------
@@ -20,21 +20,21 @@
 // ------------------------------------------------------------
 class Engine {
 private:
-	unsigned int SCR_WIDTH;
-	unsigned int SCR_HEIGHT;
+	int SCR_WIDTH;
+	int SCR_HEIGHT;
 	std::unordered_map<uint32_t, Shader> SHADER_TABLE;
 
 	GLFWwindow* window = nullptr;
 	Camera camera;
 
-	ObjectManager object_manager;
+	MeshManager mesh_manager;
 	BufferManager buffer_manager;
 
 public:
-	Engine(unsigned int screen_width, unsigned int screen_height) :
+	Engine(int screen_width, int screen_height) :
 		SCR_WIDTH(screen_width),
 		SCR_HEIGHT(screen_height),
-		camera (SCR_WIDTH, SCR_HEIGHT, glm::vec3(0.0f, 0.0f, 2.0f))
+		camera (SCR_WIDTH, SCR_HEIGHT, glm::vec3(0.0f, 0.0f, 5.0f))
 	{}
 	~Engine() {
 		glfwTerminate();
@@ -88,14 +88,12 @@ public:
 		while (!glfwWindowShouldClose(window)) {
 			// render
 			// -----------
+			this->camera.Inputs(window);
+
 			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			//this->camera.Inputs(window);
-
 			//popCat.Bind();
-
-			std::cout << "about to draw" << std::endl;
 
 			this->buffer_manager.draw(this->camera, this->window, fov, near, far, this->SHADER_TABLE);
 
@@ -105,32 +103,32 @@ public:
 		}
 	}
 
-	void commit() { this->buffer_manager.commit(this->object_manager.get_objects()); }
+	void commit() { this->buffer_manager.commit(this->mesh_manager.get_meshes()); }
 
-	ObjectManager get_object_mng() { return this->object_manager; }
+	MeshManager get_mesh_mng() { return this->mesh_manager; }
 	BufferManager get_buffer_mng() { return this->buffer_manager; }
 
 	void clear() {
-		this->object_manager.clear();
+		this->mesh_manager.clear();
 		this->buffer_manager.clear();
 	}
-	struct object get(unsigned short id) { return this->object_manager.at(id); }
-	std::unordered_map<unsigned short, object>& get_objects() { return this->object_manager.get_objects(); }
-	void delete_object(unsigned short id) { this->object_manager.delete_object(id); };
+	struct mesh get(unsigned short id) { return this->mesh_manager.at(id); }
+	std::unordered_map<unsigned short, mesh>& get_meshes() { return this->mesh_manager.get_meshes(); }
+	void delete_mesh(unsigned short id) { this->mesh_manager.delete_mesh(id); };
 
-	void append_cords_data(unsigned short id, std::vector<GLfloat> cords_data) { this->object_manager.append_cords_data(id, cords_data); }
-	void append_color_data(unsigned short id, std::vector<GLfloat> color_data, bool rgba = false) { this->object_manager.append_color_data(id, color_data, rgba); }
-	void append_tex_data(unsigned short id, std::vector<GLfloat> tex_data) { this->object_manager.append_tex_data(id, tex_data); }
-	void append_indices(unsigned short id, std::vector<GLuint> indices) { this->object_manager.append_indices(id, indices); }
+	void append_cord_data(unsigned short id, std::vector<GLfloat> cords_data) { this->mesh_manager.append_cord_data(id, cords_data); }
+	void append_color_data(unsigned short id, std::vector<GLfloat> color_data, bool rgba = false) { this->mesh_manager.append_color_data(id, color_data, rgba); }
+	void append_tex_data(unsigned short id, std::vector<GLfloat> tex_data) { this->mesh_manager.append_tex_data(id, tex_data); }
+	void append_indices(unsigned short id, std::vector<GLuint> indices) { this->mesh_manager.append_indices(id, indices); }
 	
-	void replace_cords_data(unsigned short id, std::vector<GLfloat> cords_data) { this->object_manager.replace_cords_data(id, cords_data); }
-	void replace_color_data(unsigned short id, std::vector<GLfloat> color_data, bool rgba = false) { this->object_manager.replace_color_data(id, color_data, rgba); }
-	void replace_tex_data(unsigned short id, std::vector<GLfloat> tex_data) { this->object_manager.replace_tex_data(id, tex_data); }
-	void replace_indices(unsigned short id, std::vector<GLuint> indices) { this->object_manager.replace_indices(id, indices); }
+	void replace_cord_data(unsigned short id, std::vector<GLfloat> cords_data) { this->mesh_manager.replace_cord_data(id, cords_data); }
+	void replace_color_data(unsigned short id, std::vector<GLfloat> color_data, bool rgba = false) { this->mesh_manager.replace_color_data(id, color_data, rgba); }
+	void replace_tex_data(unsigned short id, std::vector<GLfloat> tex_data) { this->mesh_manager.replace_tex_data(id, tex_data); }
+	void replace_indices(unsigned short id, std::vector<GLuint> indices) { this->mesh_manager.replace_indices(id, indices); }
 
-	void add_obj(object obj) { object_manager.add_obj(obj); }
-	void add_obj(std::vector<GLfloat> cords, std::vector<GLfloat> color, std::vector<GLfloat> tex, std::vector<GLuint> indices, bool is_rgba = false) {
-		this->object_manager.add_obj(cords, color, tex, indices, is_rgba);
+	void add_mesh(mesh mesh) { mesh_manager.add_mesh(mesh); }
+	void add_mesh(std::vector<GLfloat> cords, std::vector<GLfloat> color, std::vector<GLfloat> tex, std::vector<GLuint> indices, bool is_rgba = false) {
+		this->mesh_manager.add_mesh(cords, color, tex, indices, is_rgba);
 	}
 };
 

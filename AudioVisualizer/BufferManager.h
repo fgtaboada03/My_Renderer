@@ -14,29 +14,29 @@
 
 // TODO determine if this even runs
 
-struct MeshBuffers {
+struct MeshBuffer {
 	VBO vbo;
 	EBO ebo;
 	VAO vao;
 	VertexLayout layout;
 
-	MeshBuffers() = default;
-	~MeshBuffers() = default;
+	MeshBuffer() = default;
+	~MeshBuffer() = default;
+
 
 	bool empty();
 
-	GLuint get_vbo_id();
 	std::vector<GLfloat> get_vbo();
-	GLuint get_ebo_id();
 	std::vector<GLuint> get_ebo();
+
+	GLuint get_vbo_id();
+	GLuint get_ebo_id();
 	GLuint get_vao_id();
 
 	void erase();
 
 	void append_vbo(GLfloat data);
 	void append_ebo(GLuint data);
-
-	void buffer_data();
 
 	void bind();
 	void unbind();
@@ -49,15 +49,15 @@ struct MeshBuffers {
 
 class BufferManager {
 private:
-	std::unordered_map<uint32_t, MeshBuffers> meshes;
+	std::unordered_map<uint32_t, MeshBuffer> meshes;
 public:
 	BufferManager() = default;
 	~BufferManager();
 
-	std::unordered_map<uint32_t, MeshBuffers> get();
+	std::unordered_map<uint32_t, MeshBuffer> get();
 	void clear();
 
-	void commit(std::unordered_map<unsigned short, object>& objects);
+	void commit(std::unordered_map<unsigned short, mesh>& meshes);
 	void draw(Camera& cam, GLFWwindow* window, float fov, float near, float far, std::unordered_map<uint32_t, Shader>& shader_table);
 };
 

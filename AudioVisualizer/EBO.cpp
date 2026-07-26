@@ -8,49 +8,48 @@ EBO::~EBO() {
 	Delete();
 }
 
-GLuint EBO::get_id() {
+unsigned int EBO::get_id() {
 	return this->ID;
 }
 
-std::vector<GLuint> EBO::get_ebo() {
+std::vector<unsigned int> EBO::get_ebo() {
 	return this->ebo;
 }
 
-GLuint* EBO::data() {
+unsigned int* EBO::data() {
 	return ebo.data();
 }
 
-void EBO::buffer_data() {
-	this->ebo.shrink_to_fit();
+int EBO::buffer_data() {
+	GLint boundEBO = 0;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &boundEBO);
 
-	std::cout << "\nebo:\n" << this->ebo.size() << std::endl << this->ebo.capacity() << std::endl;
-
-	for (int i = 0; i < this->ebo.size(); i++) {
-		std::cout << this->ebo.data()[i] << std::endl;
+	if (boundEBO != ID) {
+		return 1;
 	}
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, ebo.size() * sizeof(GLuint), this->ebo.data(), GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	this->ebo.shrink_to_fit();
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, ebo.size() * sizeof(unsigned int), this->ebo.data(), GL_STATIC_DRAW);
+	return 0;
 }
 
-void EBO::copy_vector(std::vector<GLuint> vector) {
+void EBO::copy_vector(std::vector<unsigned int> vector) {
 	this->ebo = vector;
 }
 
-void EBO::append_data(GLuint data) {
+void EBO::append_data(unsigned int data) {
 	this->ebo.push_back(data);
 }
 
-void EBO::insert_data(int index, GLuint data) {
+void EBO::insert_data(int index, unsigned int data) {
 	this->ebo[index] = data;
 }
 
-void EBO::Bind() {
+void EBO::bind() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
 }
 
-void EBO::Unbind() {
+void EBO::unbind() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 

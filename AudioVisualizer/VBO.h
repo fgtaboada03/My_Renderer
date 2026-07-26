@@ -7,26 +7,25 @@
 
 class VBO {
 private:
-	GLuint ID;
-	std::vector<GLfloat> vbo;
+	unsigned int ID;
+	std::vector<float> vbo;
 
 public:
 	VBO();
 	~VBO();
 
-	GLuint get_id();
-	std::vector<GLfloat> get_vbo();
-	GLfloat* data();
+	unsigned int get_id();
+	std::vector<float> get_vbo();
 
 	bool empty();
 
-	void buffer_data();
-	void copy_vector(std::vector<GLfloat> vector);
-	void append_data(GLfloat data);
-	void insert_data(int index, GLfloat data);
+	int buffer_data();
+	void copy_vector(std::vector<float> vector);
+	void append_data(float data);
+	void insert_data(int index, float data);
 
-	void Bind();
-	void Unbind();
+	void bind();
+	void unbind();
 	void Delete();
 };
 

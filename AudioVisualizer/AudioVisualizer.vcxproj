@@ -151,7 +151,7 @@
     <ClCompile Include="Libraries\include\glm\detail\glm.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MultiCodecAudioDecoder.cpp" />
-    <ClCompile Include="ObjectManager.cpp" />
+    <ClCompile Include="MeshManager.cpp" />
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="primitives.h" />
     <ClCompile Include="stb.cpp" />
@@ -590,7 +590,7 @@
     <ClInclude Include="Libraries\include\libswscale\version_major.h" />
     <ClInclude Include="Libraries\include\stb\stb_image.h" />
     <ClInclude Include="MultiCodecAudioDecoder.h" />
-    <ClInclude Include="ObjectManager.h" />
+    <ClInclude Include="MeshManager.h" />
     <ClInclude Include="engine.h" />
     <ClInclude Include="texture.h" />
     <ClInclude Include="shader.h" />

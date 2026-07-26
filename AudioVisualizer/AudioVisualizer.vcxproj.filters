@@ -66,7 +66,7 @@
     <ClCompile Include="BufferManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectManager.cpp">
+    <ClCompile Include="MeshManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1372,7 +1372,7 @@
     <ClInclude Include="BufferManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectManager.h">
+    <ClInclude Include="MeshManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="VertexLayout.h">
