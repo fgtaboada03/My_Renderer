@@ -38,12 +38,6 @@ struct MeshBuffer {
 	void append_vbo(GLfloat data);
 	void append_ebo(GLuint data);
 
-	void bind();
-	void unbind();
-
-	void EnableAttribs();
-	void DisableAttribs();
-
 	void draw(Camera& cam, GLFWwindow* window, float fov, float near, float far, std::unordered_map<uint32_t, Shader>& shader_table);
 };
 

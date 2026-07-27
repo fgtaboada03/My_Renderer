@@ -27,15 +27,26 @@ int main() {
 
 	Engine engine(intial_scr_width, intial_scr_height);
 
+	std::cout << "MAIN 32" << std::endl;
+
 	if (engine.init()) {
 		return 1;
 	}
 
+	std::cout << "MAIN 34" << std::endl;
+
 	VertexLayout layout = VertexLayout(VERTEX_XYZ | VERTEX_RGB);
+
+	std::cout << "MAIN 36" << std::endl;
 
 	mesh tri = triangle(layout);
 
+	std::cout << "MAIN 38" << std::endl;
+
  	engine.add_mesh(tri);
+
+	std::cout << "MAIN 40" << std::endl;
+
 	engine.commit();
 
 	// Texture Stuff

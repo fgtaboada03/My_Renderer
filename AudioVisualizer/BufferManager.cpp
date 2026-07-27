@@ -38,75 +38,31 @@ void MeshBuffer::append_ebo(GLuint data) {
 	this->ebo.append_data(data);
 }
 
-void MeshBuffer::bind() {
-	this->vao.bind();
-	this->vbo.bind();
-	this->ebo.bind();
-}
-
-void MeshBuffer::unbind() {
-	this->vbo.unbind();
-	this->vao.unbind();
-	this->ebo.unbind();
-}
-
-void MeshBuffer::EnableAttribs() {
-	glEnableVertexAttribArray(layout.loc_xyz);
-
-	if (this->layout.has_color()) {
-		glEnableVertexAttribArray(layout.loc_color);
-	}
-	if (this->layout.has_uv()) {
-		glEnableVertexAttribArray(layout.loc_uv);
-	}
-}
-
-void MeshBuffer::DisableAttribs() {
-	glDisableVertexAttribArray(layout.loc_xyz);
-
-	if (this->layout.has_color()) {
-		glDisableVertexAttribArray(layout.loc_color);
-	}
-	if (this->layout.has_uv()) {
-		glDisableVertexAttribArray(layout.loc_uv);
-	}
-}
-
 void MeshBuffer::draw(Camera& cam, GLFWwindow* window, float fov, float near, float far, std::unordered_map<uint32_t, Shader>& shader_table) {
-	Shader& shader = shader_table.at(layout.flags);
-	
-	//glBindBuffer(GL_ARRAY_BUFFER, vbo.get_id());
+	Shader shader = shader_table.at(layout.flags);
 
-	//const size_t size = get_vbo().size();
-
-	//float data[18];
-	//glGetBufferSubData(GL_ARRAY_BUFFER, 0, size * sizeof(GLfloat), data);
-
-	//for (int i = 0; i < get_vbo().size(); i++) {
-	//	std::cout << "i: " << data[i] << std::endl;
-	//}
-
-	//glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo.get_id());
-	//unsigned int indices[3];
-	//glGetBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, 3 * sizeof(unsigned int), indices);
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-	//for (int i = 0; i < 3; i++) {
-	//	std::cout << "i: " << indices[i] << std::endl;
-	//}
+	std::cout << "drawing with layout.flags=" << layout.flags
+		<< " shader id=" << shader.get_id() << std::endl;
 
 	shader.Activate();
-	cam.Matrix(fov, near, far, shader, "camMatrix");
-	this->vao.bind();
-	//this->EnableAttribs();
 
-	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(this->get_ebo().size()), GL_UNSIGNED_INT, 0);
+	cam.Matrix(fov, near, far, shader, "camMatrix");
+	vao.bind();
+
+	GLint enabled = 0;
+	glGetVertexAttribiv(layout.loc_color, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
+	void* ptr = nullptr;
+	glGetVertexAttribPointerv(layout.loc_color, GL_VERTEX_ATTRIB_ARRAY_POINTER, &ptr);
+	GLint stride = 0;
+	glGetVertexAttribiv(layout.loc_color, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
+	std::cout << "color attrib enabled=" << enabled
+		<< " offset=" << ptr
+		<< " stride=" << stride << std::endl;
+
+	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(ebo.size()), GL_UNSIGNED_INT, 0);
 	//glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(this->get_ebo().size()));
 
-	//this->DisableAttribs();
-	this->unbind();
+	vao.unbind();
 	shader.Deactivate();
 }
 
@@ -191,28 +147,65 @@ void BufferManager::commit(std::unordered_map<unsigned short, mesh>& meshes) {
 			std::cout << "Failed to buffer ebo data" << std::endl;
 			continue;
 		}
+
+		for (GLenum err; (err = glGetError()) != GL_NO_ERROR; ) {
+			std::cout << "Commit GL error after LinkAttribs: 0x" << std::hex << err << std::endl;
+		}
+
 		mesh_buffer.vao.LinkAttribs(layout);
-		mesh_buffer.unbind();
+
+		for (GLenum err; (err = glGetError()) != GL_NO_ERROR; ) {
+			std::cout << "GL error after LinkAttribs: 0x" << std::hex << err << std::endl;
+		}
+		mesh_buffer.vao.unbind();
+		mesh_buffer.ebo.unbind();
+		mesh_buffer.vbo.unbind();
 	}
 
-	//for (auto mesh : meshes) {
-	//	MeshBuffers& mesh_buffer = mesh.second;
-	//	VertexLayout layout = mesh.second.layout;
+	for (auto& mesh : this->meshes) {
+		MeshBuffer& mesh_buffer = mesh.second;
+		VertexLayout layout = mesh.second.layout;
 
-	//	std::cout << "vbo id: " << mesh_buffer.get_vbo_id() << std::endl;
+		// ---- VBO readback ----
+		mesh_buffer.vbo.bind();
 
-	//	for (auto data : mesh_buffer.get_vbo()) {
-	//		std::cout << data << std::endl;
-	//	}
+		GLint vbo_size_bytes = 0;
+		glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &vbo_size_bytes);
 
-	//	std::cout << "ebo id: " << mesh_buffer.get_ebo_id() << std::endl;
+		std::vector<GLfloat> gpu_vbo(vbo_size_bytes / sizeof(GLfloat));
+		glGetBufferSubData(GL_ARRAY_BUFFER, 0, vbo_size_bytes, gpu_vbo.data());
 
-	//	for (auto data : mesh_buffer.get_ebo()) {
-	//		std::cout << data << std::endl;
-	//	}
+		std::cout << "vbo id: " << mesh_buffer.get_vbo_id()
+			<< " (" << vbo_size_bytes << " bytes, "
+			<< gpu_vbo.size() << " floats on GPU)" << std::endl;
 
-	//	std::cout << "vao id: " << mesh_buffer.get_vao_id() << std::endl;
-	//}
+		for (auto data : gpu_vbo) {
+			std::cout << data << std::endl;
+		}
+
+		mesh_buffer.vbo.unbind();
+
+		// ---- EBO readback ----
+		mesh_buffer.ebo.bind();
+
+		GLint ebo_size_bytes = 0;
+		glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &ebo_size_bytes);
+
+		std::vector<GLuint> gpu_ebo(ebo_size_bytes / sizeof(GLuint));
+		glGetBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, ebo_size_bytes, gpu_ebo.data());
+
+		std::cout << "ebo id: " << mesh_buffer.get_ebo_id()
+			<< " (" << ebo_size_bytes << " bytes, "
+			<< gpu_ebo.size() << " indices on GPU)" << std::endl;
+
+		for (auto data : gpu_ebo) {
+			std::cout << data << std::endl;
+		}
+
+		mesh_buffer.ebo.unbind();
+
+		std::cout << "vao id: " << mesh_buffer.get_vao_id() << std::endl;
+	}
 }
 
 void BufferManager::draw(Camera& cam, GLFWwindow* window, float fov, float near, float far, std::unordered_map<uint32_t, Shader>& shader_table) {

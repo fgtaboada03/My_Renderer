@@ -55,20 +55,17 @@ struct VertexLayout {
 
 		return -1;
 	}
-	const void* get_uv_offset_vao() { 
-		int byte_offset = offset_uv * sizeof(float);
-		const void* ptr = &byte_offset;
-		return ptr;
+	const void* get_uv_offset_vao() const {
+		return reinterpret_cast<const void*>(static_cast<intptr_t>(offset_uv * sizeof(float)));
 	}
-	const void* get_color_offset_vao() {
-		int byte_offset = offset_color * sizeof(float);
-		const void* ptr = &byte_offset;
-		return ptr;
+	const void* get_color_offset_vao() const {
+		return reinterpret_cast<const void*>(static_cast<intptr_t>(offset_color * sizeof(float)));
 	}
-	const void* get_xyz_offset_vao() {
-		int byte_offset = offset_xyz * sizeof(float);
-		const void* ptr = &byte_offset;
-		return ptr;
+	const void* get_xyz_offset_vao() const {
+		if (offset_xyz)
+			return reinterpret_cast<const void*>(static_cast<intptr_t>(offset_xyz * sizeof(float)));
+		else
+			return (void*)0;
 	}
 	int get_stride_byte() {
 		return stride * sizeof(float);

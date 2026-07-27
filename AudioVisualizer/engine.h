@@ -67,14 +67,45 @@ public:
 		};
 		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 
-		this->SHADER_TABLE = {
-			{ VERTEX_XYZ							, Shader("cords.vert", "cords.frag") },
-			{ VERTEX_XYZ | VERTEX_RGB				, Shader("rgb.vert", "rgb.frag") },
-			{ VERTEX_XYZ | VERTEX_RGB | VERTEX_UV	, Shader("rgb_uv.vert", "rgb_uv.frag") },
-			{ VERTEX_XYZ | VERTEX_RGBA				, Shader("rgba.vert", "rgba.frag") },
-			{ VERTEX_XYZ | VERTEX_RGBA | VERTEX_UV	, Shader("rgba_uv.vert", "rgba_uv.frag") },
-			{ VERTEX_XYZ | VERTEX_UV				, Shader("uv.vert", "uv.frag") }
-		};
+		for (GLenum err; (err = glGetError()) != GL_NO_ERROR; ) {
+			std::cout << "INIT 1 GL error after LinkAttribs: 0x" << std::hex << err << std::endl;
+		}
+
+		std::cout << "INIT 1" << std::endl;
+
+		SHADER_TABLE.clear();
+
+		SHADER_TABLE.emplace(
+			std::piecewise_construct,
+			std::forward_as_tuple(VERTEX_XYZ),
+			std::forward_as_tuple("cords.vert", "cords.frag"));
+
+		SHADER_TABLE.emplace(
+			std::piecewise_construct,
+			std::forward_as_tuple(VERTEX_XYZ | VERTEX_RGB),
+			std::forward_as_tuple("rgb.vert", "rgb.frag"));
+
+		SHADER_TABLE.emplace(
+			std::piecewise_construct,
+			std::forward_as_tuple(VERTEX_XYZ | VERTEX_RGB | VERTEX_UV),
+			std::forward_as_tuple("rgb_uv.vert", "rgb_uv.frag"));
+
+		SHADER_TABLE.emplace(
+			std::piecewise_construct,
+			std::forward_as_tuple(VERTEX_XYZ | VERTEX_RGB),
+			std::forward_as_tuple("rgba.vert", "rgba.frag"));
+
+		SHADER_TABLE.emplace(
+			std::piecewise_construct,
+			std::forward_as_tuple(VERTEX_XYZ | VERTEX_RGBA | VERTEX_UV),
+			std::forward_as_tuple("rgba_uv.vert", "rgba_uv.frag"));
+
+		// TODO : Won't construct uv shader. Weird little bug.
+
+		SHADER_TABLE.emplace(
+			std::piecewise_construct,
+			std::forward_as_tuple(VERTEX_XYZ | VERTEX_UV),
+			std::forward_as_tuple("uv.vert", "uv.frag"));
 
 		return 0;
 	}
@@ -95,7 +126,7 @@ public:
 
 			//popCat.Bind();
 
-			this->buffer_manager.draw(this->camera, this->window, fov, near, far, this->SHADER_TABLE);
+			this->buffer_manager.draw(this->camera, this->window, fov, near, far, SHADER_TABLE);
 
 			// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 			glfwSwapBuffers(window);

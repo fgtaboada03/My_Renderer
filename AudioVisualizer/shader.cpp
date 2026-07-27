@@ -21,6 +21,10 @@ Shader::Shader(const char* vertexFile, const char* fragmentFile) {
 	std::string vertexCode = get_file_contents(vertexFile);
 	std::string fragmentCode = get_file_contents(fragmentFile);
 
+	for (GLenum err; (err = glGetError()) != GL_NO_ERROR; ) {
+		std::cout << "SHADER 1 GL error after LinkAttribs: 0x" << std::hex << err << std::endl;
+	}
+
 	const char* vertexSource = vertexCode.c_str();
 	const char* fragmentSource = fragmentCode.c_str();
 
@@ -64,15 +68,25 @@ Shader::Shader(const char* vertexFile, const char* fragmentFile) {
 		std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
 	}
 
-	glDetachShader(ID, vertexShader);
-	glDetachShader(ID, fragmentShader);
+	for (GLenum err; (err = glGetError()) != GL_NO_ERROR; ) {
+		std::cout << "SHADER 1: " << ID << " GL error after LinkAttribs: 0x" << std::hex << err << std::endl;
+	}
 
 	// Delete the Vertex and Fragment Shader objects
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
+
+	GLenum err = glGetError();
+
+	for (; err != GL_NO_ERROR; ) {
+		std::cout << "SHADER 2: " << ID << " GL error after LinkAttribs: 0x" << std::hex << err << std::endl;
+	}
+
+	std::cout << "Construct " << ID << std::endl;
 }
 
 Shader::~Shader() {
+	std::cout << "Destroy " << ID << std::endl;
 	Delete();
 }
 
