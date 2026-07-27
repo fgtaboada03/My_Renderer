@@ -102,8 +102,8 @@ void MeshBuffer::draw(Camera& cam, GLFWwindow* window, float fov, float near, fl
 	this->vao.bind();
 	//this->EnableAttribs();
 
-	//glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(this->get_ebo().size()), GL_UNSIGNED_INT, 0);
-	glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(this->get_ebo().size()));
+	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(this->get_ebo().size()), GL_UNSIGNED_INT, 0);
+	//glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(this->get_ebo().size()));
 
 	//this->DisableAttribs();
 	this->unbind();
@@ -182,11 +182,13 @@ void BufferManager::commit(std::unordered_map<unsigned short, mesh>& meshes) {
 
 		mesh_buffer.vbo.bind();
 		if (mesh_buffer.vbo.buffer_data()) {
+			std::cout << "Failed to buffer vbo data" << std::endl;
 			continue;
 		}
 
 		mesh_buffer.ebo.bind();
 		if (mesh_buffer.ebo.buffer_data()) {
+			std::cout << "Failed to buffer ebo data" << std::endl;
 			continue;
 		}
 		mesh_buffer.vao.LinkAttribs(layout);

@@ -22,9 +22,10 @@ unsigned int* EBO::data() {
 
 int EBO::buffer_data() {
 	GLint boundEBO = 0;
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &boundEBO);
+	glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &boundEBO);
 
 	if (boundEBO != ID) {
+		std::cout << "return 1" << std::endl;
 		return 1;
 	}
 

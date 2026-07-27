@@ -23,9 +23,10 @@ bool VBO::empty() {
 
 int VBO::buffer_data() {
 	GLint boundVBO = 0;
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &boundVBO);
+	glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &boundVBO);
 
 	if (boundVBO != ID) {
+		std::cout << "return 1" << std::endl;
 		return 1;
 	}
 
