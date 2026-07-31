@@ -38,32 +38,16 @@ void MeshBuffer::append_ebo(GLuint data) {
 	this->ebo.append_data(data);
 }
 
-void MeshBuffer::draw(Camera& cam, GLFWwindow* window, float fov, float near, float far, std::unordered_map<uint32_t, Shader>& shader_table) {
-	Shader shader = shader_table.at(layout.flags);
-
-	std::cout << "drawing with layout.flags=" << layout.flags
-		<< " shader id=" << shader.get_id() << std::endl;
-
-	shader.Activate();
-
+void MeshBuffer::draw(Camera& cam, GLFWwindow* window, float fov, float near, float far, std::unordered_map<uint32_t, Shader>* shader_table) {
+	Shader* shader = &shader_table->at(layout.flags);
+	shader->Activate();
 	cam.Matrix(fov, near, far, shader, "camMatrix");
 	vao.bind();
 
-	GLint enabled = 0;
-	glGetVertexAttribiv(layout.loc_color, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
-	void* ptr = nullptr;
-	glGetVertexAttribPointerv(layout.loc_color, GL_VERTEX_ATTRIB_ARRAY_POINTER, &ptr);
-	GLint stride = 0;
-	glGetVertexAttribiv(layout.loc_color, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
-	std::cout << "color attrib enabled=" << enabled
-		<< " offset=" << ptr
-		<< " stride=" << stride << std::endl;
-
 	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(ebo.size()), GL_UNSIGNED_INT, 0);
-	//glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(this->get_ebo().size()));
 
 	vao.unbind();
-	shader.Deactivate();
+	shader->Deactivate();
 }
 
 BufferManager::~BufferManager() {
@@ -148,15 +132,8 @@ void BufferManager::commit(std::unordered_map<unsigned short, mesh>& meshes) {
 			continue;
 		}
 
-		for (GLenum err; (err = glGetError()) != GL_NO_ERROR; ) {
-			std::cout << "Commit GL error after LinkAttribs: 0x" << std::hex << err << std::endl;
-		}
-
 		mesh_buffer.vao.LinkAttribs(layout);
 
-		for (GLenum err; (err = glGetError()) != GL_NO_ERROR; ) {
-			std::cout << "GL error after LinkAttribs: 0x" << std::hex << err << std::endl;
-		}
 		mesh_buffer.vao.unbind();
 		mesh_buffer.ebo.unbind();
 		mesh_buffer.vbo.unbind();
@@ -175,14 +152,6 @@ void BufferManager::commit(std::unordered_map<unsigned short, mesh>& meshes) {
 		std::vector<GLfloat> gpu_vbo(vbo_size_bytes / sizeof(GLfloat));
 		glGetBufferSubData(GL_ARRAY_BUFFER, 0, vbo_size_bytes, gpu_vbo.data());
 
-		std::cout << "vbo id: " << mesh_buffer.get_vbo_id()
-			<< " (" << vbo_size_bytes << " bytes, "
-			<< gpu_vbo.size() << " floats on GPU)" << std::endl;
-
-		for (auto data : gpu_vbo) {
-			std::cout << data << std::endl;
-		}
-
 		mesh_buffer.vbo.unbind();
 
 		// ---- EBO readback ----
@@ -194,21 +163,11 @@ void BufferManager::commit(std::unordered_map<unsigned short, mesh>& meshes) {
 		std::vector<GLuint> gpu_ebo(ebo_size_bytes / sizeof(GLuint));
 		glGetBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, ebo_size_bytes, gpu_ebo.data());
 
-		std::cout << "ebo id: " << mesh_buffer.get_ebo_id()
-			<< " (" << ebo_size_bytes << " bytes, "
-			<< gpu_ebo.size() << " indices on GPU)" << std::endl;
-
-		for (auto data : gpu_ebo) {
-			std::cout << data << std::endl;
-		}
-
 		mesh_buffer.ebo.unbind();
-
-		std::cout << "vao id: " << mesh_buffer.get_vao_id() << std::endl;
 	}
 }
 
-void BufferManager::draw(Camera& cam, GLFWwindow* window, float fov, float near, float far, std::unordered_map<uint32_t, Shader>& shader_table) {
+void BufferManager::draw(Camera& cam, GLFWwindow* window, float fov, float near, float far, std::unordered_map<uint32_t, Shader>* shader_table) {
 	for (auto& it : this->meshes) {
 		MeshBuffer& mesh_buffer = it.second;
 		mesh_buffer.draw(cam, window, fov, near, far, shader_table);

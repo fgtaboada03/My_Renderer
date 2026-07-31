@@ -23,7 +23,6 @@ int VAO::LinkAttribs(VertexLayout& layout) {
 
 	// Link Color
 	if (layout.has_color()) {
-		std::cout << "color offset bytes: " << (intptr_t)layout.get_color_offset_vao() << std::endl;
 		glVertexAttribPointer(layout.loc_color, layout.color_components(), GL_FLOAT, GL_FALSE, layout.get_stride_byte(), layout.get_color_offset_vao());
 		glEnableVertexAttribArray(layout.loc_color);
 
@@ -34,8 +33,6 @@ int VAO::LinkAttribs(VertexLayout& layout) {
 
 	// Link UV
 	if (layout.has_uv()) {
-		std::cout << "texture offset bytes: " << (intptr_t)layout.get_uv_offset_vao() << std::endl;
-
 		glEnableVertexAttribArray(layout.loc_uv);
 		glVertexAttribPointer(layout.loc_uv, 2, GL_FLOAT, GL_FALSE, layout.get_stride_byte(), layout.get_uv_offset_vao());
 

@@ -38,7 +38,7 @@ struct MeshBuffer {
 	void append_vbo(GLfloat data);
 	void append_ebo(GLuint data);
 
-	void draw(Camera& cam, GLFWwindow* window, float fov, float near, float far, std::unordered_map<uint32_t, Shader>& shader_table);
+	void draw(Camera& cam, GLFWwindow* window, float fov, float near, float far, std::unordered_map<uint32_t, Shader>* shader_table);
 };
 
 class BufferManager {
@@ -52,7 +52,7 @@ public:
 	void clear();
 
 	void commit(std::unordered_map<unsigned short, mesh>& meshes);
-	void draw(Camera& cam, GLFWwindow* window, float fov, float near, float far, std::unordered_map<uint32_t, Shader>& shader_table);
+	void draw(Camera& cam, GLFWwindow* window, float fov, float near, float far, std::unordered_map<uint32_t, Shader>* shader_table);
 };
 
 #endif

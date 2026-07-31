@@ -67,12 +67,6 @@ public:
 		};
 		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 
-		for (GLenum err; (err = glGetError()) != GL_NO_ERROR; ) {
-			std::cout << "INIT 1 GL error after LinkAttribs: 0x" << std::hex << err << std::endl;
-		}
-
-		std::cout << "INIT 1" << std::endl;
-
 		SHADER_TABLE.clear();
 
 		SHADER_TABLE.emplace(
@@ -126,7 +120,7 @@ public:
 
 			//popCat.Bind();
 
-			this->buffer_manager.draw(this->camera, this->window, fov, near, far, SHADER_TABLE);
+			this->buffer_manager.draw(this->camera, this->window, fov, near, far, &SHADER_TABLE);
 
 			// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 			glfwSwapBuffers(window);
